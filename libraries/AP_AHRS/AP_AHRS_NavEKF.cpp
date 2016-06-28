@@ -230,8 +230,8 @@ void AP_AHRS_NavEKF::update_EKF2(void)
             }
             _gyro_estimate += _gyro_bias;
 
-            float abias;
-            EKF2.getAccelZBias(-1,abias);
+            Vector3f abias;
+            EKF2.getAccelBias(-1,abias);
 
             // This EKF uses the primary IMU
             // Eventually we will run a separate instance of the EKF for each IMU and do the selection and blending of EKF outputs upstream
@@ -239,7 +239,7 @@ void AP_AHRS_NavEKF::update_EKF2(void)
             for (uint8_t i=0; i<_ins.get_accel_count(); i++) {
                 Vector3f accel = _ins.get_accel(i);
                 if (i==_ins.get_primary_accel()) {
-                    accel.z -= abias;
+                    accel -= abias;
                 }
                 if (_ins.get_accel_health(i)) {
                     _accel_ef_ekf[i] = _dcm_matrix * accel;
