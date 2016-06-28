@@ -258,10 +258,9 @@ struct PACKED log_EKF2 {
 struct PACKED log_NKF2 {
     LOG_PACKET_HEADER;
     uint64_t time_us;
-    int8_t AZbias;
-    int16_t scaleX;
-    int16_t scaleY;
-    int16_t scaleZ;
+    int16_t accBiasX;
+    int16_t accBiasY;
+    int16_t accBiasZ;
     int16_t windN;
     int16_t windE;
     int16_t magN;
@@ -792,7 +791,7 @@ Format characters in the format string for binary log messages
     { LOG_NKF1_MSG, sizeof(log_EKF1), \
       "NKF1","QccCfffffffccc","TimeUS,Roll,Pitch,Yaw,VN,VE,VD,dPD,PN,PE,PD,GX,GY,GZ" }, \
     { LOG_NKF2_MSG, sizeof(log_NKF2), \
-      "NKF2","QbccccchhhhhhB","TimeUS,AZbias,GSX,GSY,GSZ,VWN,VWE,MN,ME,MD,MX,MY,MZ,MI" }, \
+      "NKF2","QccccchhhhhhB","TimeUS,AX,AY,AZ,VWN,VWE,MN,ME,MD,MX,MY,MZ,MI" }, \
     { LOG_NKF3_MSG, sizeof(log_NKF3), \
       "NKF3","Qcccccchhhcc","TimeUS,IVN,IVE,IVD,IPN,IPE,IPD,IMX,IMY,IMZ,IYAW,IVT" }, \
     { LOG_NKF4_MSG, sizeof(log_NKF4), \
@@ -802,7 +801,7 @@ Format characters in the format string for binary log messages
     { LOG_NKF6_MSG, sizeof(log_EKF1), \
       "NKF6","QccCfffffffccc","TimeUS,Roll,Pitch,Yaw,VN,VE,VD,dPD,PN,PE,PD,GX,GY,GZ" }, \
     { LOG_NKF7_MSG, sizeof(log_NKF2), \
-      "NKF7","QbccccchhhhhhB","TimeUS,AZbias,GSX,GSY,GSZ,VWN,VWE,MN,ME,MD,MX,MY,MZ,MI" }, \
+      "NKF7","QccccchhhhhhB","TimeUS,AX,AY,AZ,VWN,VWE,MN,ME,MD,MX,MY,MZ,MI" }, \
     { LOG_NKF8_MSG, sizeof(log_NKF3), \
       "NKF8","Qcccccchhhcc","TimeUS,IVN,IVE,IVD,IPN,IPE,IPD,IMX,IMY,IMZ,IYAW,IVT" }, \
     { LOG_NKF9_MSG, sizeof(log_NKF4), \

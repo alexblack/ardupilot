@@ -1320,24 +1320,21 @@ void DataFlash_Class::Log_Write_EKF2(AP_AHRS_NavEKF &ahrs, bool optFlowEnabled)
     WriteBlock(&pkt, sizeof(pkt));
 
     // Write second EKF packet
-    float azbias = 0;
     Vector3f wind;
     Vector3f magNED;
     Vector3f magXYZ;
-    Vector3f gyroScaleFactor;
+    Vector3f accelBias;
     uint8_t magIndex = ahrs.get_NavEKF2().getActiveMag(0);
-    ahrs.get_NavEKF2().getAccelZBias(0,azbias);
     ahrs.get_NavEKF2().getWind(0,wind);
     ahrs.get_NavEKF2().getMagNED(0,magNED);
     ahrs.get_NavEKF2().getMagXYZ(0,magXYZ);
-    ahrs.get_NavEKF2().getGyroScaleErrorPercentage(0,gyroScaleFactor);
+    ahrs.get_NavEKF2().getAccelBias(0,accelBias);
     struct log_NKF2 pkt2 = {
         LOG_PACKET_HEADER_INIT(LOG_NKF2_MSG),
         time_us : time_us,
-        AZbias  : (int8_t)(100*azbias),
-        scaleX  : (int16_t)(100*gyroScaleFactor.x),
-        scaleY  : (int16_t)(100*gyroScaleFactor.y),
-        scaleZ  : (int16_t)(100*gyroScaleFactor.z),
+        accBiasX  : (int16_t)(100*accelBias.x),
+        accBiasY  : (int16_t)(100*accelBias.y),
+        accBiasZ  : (int16_t)(100*accelBias.z),
         windN   : (int16_t)(100*wind.x),
         windE   : (int16_t)(100*wind.y),
         magN    : (int16_t)(magNED.x),
@@ -1471,19 +1468,17 @@ void DataFlash_Class::Log_Write_EKF2(AP_AHRS_NavEKF &ahrs, bool optFlowEnabled)
         WriteBlock(&pkt6, sizeof(pkt6));
 
         // Write 7th EKF packet
-        ahrs.get_NavEKF2().getAccelZBias(1,azbias);
         ahrs.get_NavEKF2().getWind(1,wind);
         ahrs.get_NavEKF2().getMagNED(1,magNED);
         ahrs.get_NavEKF2().getMagXYZ(1,magXYZ);
-        ahrs.get_NavEKF2().getGyroScaleErrorPercentage(1,gyroScaleFactor);
+        ahrs.get_NavEKF2().getAccelBias(1,accelBias);
         magIndex = ahrs.get_NavEKF2().getActiveMag(1);
         struct log_NKF2 pkt7 = {
             LOG_PACKET_HEADER_INIT(LOG_NKF7_MSG),
             time_us : time_us,
-            AZbias  : (int8_t)(100*azbias),
-            scaleX  : (int16_t)(100*gyroScaleFactor.x),
-            scaleY  : (int16_t)(100*gyroScaleFactor.y),
-            scaleZ  : (int16_t)(100*gyroScaleFactor.z),
+            accBiasX  : (int16_t)(100*accelBias.x),
+            accBiasY  : (int16_t)(100*accelBias.y),
+            accBiasZ  : (int16_t)(100*accelBias.z),
             windN   : (int16_t)(100*wind.x),
             windE   : (int16_t)(100*wind.y),
             magN    : (int16_t)(magNED.x),
