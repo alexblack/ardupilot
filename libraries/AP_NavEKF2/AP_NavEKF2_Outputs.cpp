@@ -115,22 +115,20 @@ void NavEKF2_core::getGyroBias(Vector3f &gyroBias) const
     gyroBias = stateStruct.gyro_bias / dtEkfAvg;
 }
 
-// return body axis gyro scale factor error as a percentage
-void NavEKF2_core::getGyroScaleErrorPercentage(Vector3f &gyroScale) const
+// return accelerometer bias in m/s/s
+void NavEKF2_core::getAccelBias(Vector3f &accelBias) const
 {
     if (!statesInitialised) {
-        gyroScale.x = gyroScale.y = gyroScale.z = 0;
+        accelBias.zero();
         return;
     }
-    gyroScale.x = 100.0f/stateStruct.gyro_scale.x - 100.0f;
-    gyroScale.y = 100.0f/stateStruct.gyro_scale.y - 100.0f;
-    gyroScale.z = 100.0f/stateStruct.gyro_scale.z - 100.0f;
+    accelBias = stateStruct.accel_bias / dtEkfAvg;
 }
 
 // return tilt error convergence metric
 void NavEKF2_core::getTiltError(float &ang) const
 {
-    ang = tiltErrFilt;
+    ang = stateStruct.quat.length();
 }
 
 // return the transformation matrix from XYZ (body) to NED axes
@@ -198,15 +196,6 @@ float NavEKF2_core::getPosDownDerivative(void) const
 void NavEKF2_core::getAccelNED(Vector3f &accelNED) const {
     accelNED = velDotNED;
     accelNED.z -= GRAVITY_MSS;
-}
-
-// return the Z-accel bias estimate in m/s^2
-void NavEKF2_core::getAccelZBias(float &zbias) const {
-    if (dtEkfAvg > 0) {
-        zbias = stateStruct.accel_zbias / dtEkfAvg;
-    } else {
-        zbias = 0;
-    }
 }
 
 // Return the last calculated NED position relative to the reference point (m).

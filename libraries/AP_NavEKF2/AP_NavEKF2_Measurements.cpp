@@ -315,12 +315,6 @@ void NavEKF2_core::readIMUData()
         imuDataDelayed.delAngDT = MAX(imuDataDelayed.delAngDT,minDT);
         imuDataDelayed.delVelDT = MAX(imuDataDelayed.delVelDT,minDT);
 
-        // correct the extracted IMU data for sensor errors
-        delAngCorrected = imuDataDelayed.delAng;
-        delVelCorrected = imuDataDelayed.delVel;
-        correctDeltaAngle(delAngCorrected, imuDataDelayed.delAngDT);
-        correctDeltaVelocity(delVelCorrected, imuDataDelayed.delVelDT);
-
     } else {
         // we don't have new IMU data in the buffer so don't run filter updates on this time step
         runUpdates = false;

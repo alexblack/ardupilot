@@ -49,11 +49,11 @@ void NavEKF2_core::ResetVelocity(void)
     lastVelReset_ms = imuSampleTime_ms;
 
     // reset the corresponding covariances
-    zeroRows(P,3,4);
-    zeroCols(P,3,4);
+    zeroRows(P,4,5);
+    zeroCols(P,4,5);
 
     // set the variances to the measurement variance
-    P[4][4] = P[3][3] = sq(frontend->_gpsHorizVelNoise);
+    P[5][5] = P[4][4] = sq(frontend->_gpsHorizVelNoise);
 
 }
 
@@ -90,11 +90,11 @@ void NavEKF2_core::ResetPosition(void)
     lastPosReset_ms = imuSampleTime_ms;
 
     // reset the corresponding covariances
-    zeroRows(P,6,7);
-    zeroCols(P,6,7);
+    zeroRows(P,7,8);
+    zeroCols(P,7,8);
 
     // set the variances to the measurement variance
-    P[6][6] = P[7][7] = sq(frontend->_gpsHorizPosNoise);
+    P[8][8] = P[7][7] = sq(frontend->_gpsHorizPosNoise);
 
 }
 
@@ -111,11 +111,11 @@ void NavEKF2_core::ResetHeight(void)
     outputDataDelayed.position.z = stateStruct.position.z;
 
     // reset the corresponding covariances
-    zeroRows(P,8,8);
-    zeroCols(P,8,8);
+    zeroRows(P,9,9);
+    zeroCols(P,9,9);
 
     // set the variances to the measurement variance
-    P[8][8] = posDownObsNoise;
+    P[9][9] = posDownObsNoise;
 
     // Reset the vertical velocity state using GPS vertical velocity if we are airborne
     // Check that GPS vertical velocity data is available and can be used
@@ -131,11 +131,11 @@ void NavEKF2_core::ResetHeight(void)
     outputDataDelayed.velocity.z = stateStruct.velocity.z;
 
     // reset the corresponding covariances
-    zeroRows(P,5,5);
-    zeroCols(P,5,5);
+    zeroRows(P,6,6);
+    zeroCols(P,6,6);
 
     // set the variances to the measurement variance
-    P[5][5] = sq(frontend->_gpsVertVelNoise);
+    P[6][6] = sq(frontend->_gpsVertVelNoise);
 
 }
 
@@ -323,7 +323,7 @@ void NavEKF2_core::FuseVelPosNED()
             float hgtErr  = stateStruct.position.z - observation[5];
             float velDErr = stateStruct.velocity.z - observation[2];
             // check if they are the same sign and both more than 3-sigma out of bounds
-            if ((hgtErr*velDErr > 0.0f) && (sq(hgtErr) > 9.0f * (P[8][8] + R_OBS_DATA_CHECKS[5])) && (sq(velDErr) > 9.0f * (P[5][5] + R_OBS_DATA_CHECKS[2]))) {
+            if ((hgtErr*velDErr > 0.0f) && (sq(hgtErr) > 9.0f * (P[9][9] + R_OBS_DATA_CHECKS[5])) && (sq(velDErr) > 9.0f * (P[6][6] + R_OBS_DATA_CHECKS[2]))) {
                 badIMUdata = true;
             } else {
                 badIMUdata = false;
@@ -336,8 +336,8 @@ void NavEKF2_core::FuseVelPosNED()
             // test horizontal position measurements
             innovVelPos[3] = stateStruct.position.x - observation[3];
             innovVelPos[4] = stateStruct.position.y - observation[4];
-            varInnovVelPos[3] = P[6][6] + R_OBS_DATA_CHECKS[3];
-            varInnovVelPos[4] = P[7][7] + R_OBS_DATA_CHECKS[4];
+            varInnovVelPos[3] = P[7][7] + R_OBS_DATA_CHECKS[3];
+            varInnovVelPos[4] = P[8][8] + R_OBS_DATA_CHECKS[4];
             // apply an innovation consistency threshold test, but don't fail if bad IMU data
             float maxPosInnov2 = sq(MAX(0.01f * (float)frontend->_gpsPosInnovGate, 1.0f))*(varInnovVelPos[3] + varInnovVelPos[4]);
             posTestRatio = (sq(innovVelPos[3]) + sq(innovVelPos[4])) / maxPosInnov2;
@@ -352,7 +352,7 @@ void NavEKF2_core::FuseVelPosNED()
                 posHealth = true;
                 lastPosPassTime_ms = imuSampleTime_ms;
                 // if timed out or outside the specified uncertainty radius, reset to the GPS
-                if (posTimeout || ((P[6][6] + P[7][7]) > sq(float(frontend->_gpsGlitchRadiusMax)))) {
+                if (posTimeout || ((P[8][8] + P[7][7]) > sq(float(frontend->_gpsGlitchRadiusMax)))) {
                     // reset the position to the current GPS position
                     ResetPosition();
                     // reset the velocity to the GPS velocity
@@ -361,10 +361,10 @@ void NavEKF2_core::FuseVelPosNED()
                     fusePosData = false;
                     fuseVelData = false;
                     // Reset the position variances and corresponding covariances to a value that will pass the checks
-                    zeroRows(P,6,7);
-                    zeroCols(P,6,7);
-                    P[6][6] = sq(float(0.5f*frontend->_gpsGlitchRadiusMax));
-                    P[7][7] = P[6][6];
+                    zeroRows(P,7,8);
+                    zeroCols(P,7,8);
+                    P[7][7] = sq(float(0.5f*frontend->_gpsGlitchRadiusMax));
+                    P[8][8] = P[7][7];
                     // Reset the normalised innovation to avoid failing the bad fusion tests
                     posTestRatio = 0.0f;
                     velTestRatio = 0.0f;
@@ -385,8 +385,8 @@ void NavEKF2_core::FuseVelPosNED()
             float innovVelSumSq = 0; // sum of squares of velocity innovations
             float varVelSum = 0; // sum of velocity innovation variances
             for (uint8_t i = 0; i<=imax; i++) {
-                // velocity states start at index 3
-                stateIndex   = i + 3;
+                // velocity states start at index 4
+                stateIndex   = i + 4;
                 // calculate innovations using blended and single IMU predicted states
                 velInnov[i]  = stateStruct.velocity[i] - observation[i]; // blended
                 // calculate innovation variance
@@ -425,7 +425,7 @@ void NavEKF2_core::FuseVelPosNED()
         if (fuseHgtData) {
             // calculate height innovations
             innovVelPos[5] = stateStruct.position.z - observation[5];
-            varInnovVelPos[5] = P[8][8] + R_OBS_DATA_CHECKS[5];
+            varInnovVelPos[5] = P[9][9] + R_OBS_DATA_CHECKS[5];
             // calculate the innovation consistency test ratio
             hgtTestRatio = sq(innovVelPos[5]) / (sq(MAX(0.01f * (float)frontend->_hgtInnovGate, 1.0f)) * varInnovVelPos[5]);
             // fail if the ratio is > 1, but don't fail if bad IMU data
@@ -462,12 +462,10 @@ void NavEKF2_core::FuseVelPosNED()
             if (useGpsVertVel) {
                 fuseData[2] = true;
             }
-            tiltErrVec.zero();
         }
         if (fusePosData && posHealth) {
             fuseData[3] = true;
             fuseData[4] = true;
-            tiltErrVec.zero();
         }
         if (fuseHgtData && hgtHealth) {
             fuseData[5] = true;
@@ -476,7 +474,7 @@ void NavEKF2_core::FuseVelPosNED()
         // fuse measurements sequentially
         for (obsIndex=0; obsIndex<=5; obsIndex++) {
             if (fuseData[obsIndex]) {
-                stateIndex = 3 + obsIndex;
+                stateIndex = 4 + obsIndex;
                 // calculate the measurement innovation, using states from a different time coordinate if fusing height data
                 // adjust scaling on GPS measurement noise variances if not enough satellites
                 if (obsIndex <= 2)
@@ -559,24 +557,12 @@ void NavEKF2_core::FuseVelPosNED()
                     ForceSymmetry();
                     ConstrainVariances();
 
-                    // update the states
-                    // zero the attitude error state - by definition it is assumed to be zero before each observaton fusion
-                    stateStruct.angErr.zero();
-
-                    // calculate state corrections and re-normalise the quaternions for states predicted using the blended IMU data
+                    // update states and renormalise the quaternions
                     for (uint8_t i = 0; i<=stateIndexLim; i++) {
                         statesArray[i] = statesArray[i] - Kfusion[i] * innovVelPos[obsIndex];
                     }
+                    stateStruct.quat.normalize();
 
-                    // the first 3 states represent the angular misalignment vector. This is
-                    // is used to correct the estimated quaternion
-                    stateStruct.quat.rotate(stateStruct.angErr);
-
-                    // sum the attitude error from velocity and position fusion only
-                    // used as a metric for convergence monitoring
-                    if (obsIndex != 5) {
-                        tiltErrVec += stateStruct.angErr;
-                    }
                     // record good fusion status
                     if (obsIndex == 0) {
                         faultStatus.bad_nvel = false;

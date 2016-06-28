@@ -17,16 +17,15 @@
 // copter defaults
 #define VELNE_M_NSE_DEFAULT     0.5f
 #define VELD_M_NSE_DEFAULT      0.7f
-#define POSNE_M_NSE_DEFAULT     1.0f
+#define POSNE_M_NSE_DEFAULT     0.5f
 #define ALT_M_NSE_DEFAULT       3.0f
 #define MAG_M_NSE_DEFAULT       0.05f
 #define GYRO_P_NSE_DEFAULT      3.0E-02f
 #define ACC_P_NSE_DEFAULT       6.0E-01f
 #define GBIAS_P_NSE_DEFAULT     1.0E-04f
-#define GSCALE_P_NSE_DEFAULT    5.0E-04f
-#define ABIAS_P_NSE_DEFAULT     5.0E-03f
-#define MAGB_P_NSE_DEFAULT      5.0E-04f
-#define MAGE_P_NSE_DEFAULT      5.0E-03f
+#define ABIAS_P_NSE_DEFAULT     3.0E-03f
+#define MAGB_P_NSE_DEFAULT      1.0E-04f
+#define MAGE_P_NSE_DEFAULT      1.0E-03f
 #define VEL_I_GATE_DEFAULT      500
 #define POS_I_GATE_DEFAULT      500
 #define HGT_I_GATE_DEFAULT      500
@@ -42,16 +41,15 @@
 // rover defaults
 #define VELNE_M_NSE_DEFAULT     0.5f
 #define VELD_M_NSE_DEFAULT      0.7f
-#define POSNE_M_NSE_DEFAULT     1.0f
+#define POSNE_M_NSE_DEFAULT     0.5f
 #define ALT_M_NSE_DEFAULT       3.0f
 #define MAG_M_NSE_DEFAULT       0.05f
 #define GYRO_P_NSE_DEFAULT      3.0E-02f
 #define ACC_P_NSE_DEFAULT       6.0E-01f
 #define GBIAS_P_NSE_DEFAULT     1.0E-04f
-#define GSCALE_P_NSE_DEFAULT    5.0E-04f
-#define ABIAS_P_NSE_DEFAULT     5.0E-03f
-#define MAGB_P_NSE_DEFAULT      5.0E-04f
-#define MAGE_P_NSE_DEFAULT      5.0E-03f
+#define ABIAS_P_NSE_DEFAULT     3.0E-03f
+#define MAGB_P_NSE_DEFAULT      1.0E-04f
+#define MAGE_P_NSE_DEFAULT      1.0E-03f
 #define VEL_I_GATE_DEFAULT      500
 #define POS_I_GATE_DEFAULT      500
 #define HGT_I_GATE_DEFAULT      500
@@ -67,16 +65,15 @@
 // plane defaults
 #define VELNE_M_NSE_DEFAULT     0.5f
 #define VELD_M_NSE_DEFAULT      0.7f
-#define POSNE_M_NSE_DEFAULT     1.0f
+#define POSNE_M_NSE_DEFAULT     0.5f
 #define ALT_M_NSE_DEFAULT       3.0f
 #define MAG_M_NSE_DEFAULT       0.05f
 #define GYRO_P_NSE_DEFAULT      3.0E-02f
 #define ACC_P_NSE_DEFAULT       6.0E-01f
 #define GBIAS_P_NSE_DEFAULT     1.0E-04f
-#define GSCALE_P_NSE_DEFAULT    5.0E-04f
-#define ABIAS_P_NSE_DEFAULT     5.0E-03f
-#define MAGB_P_NSE_DEFAULT      5.0E-04f
-#define MAGE_P_NSE_DEFAULT      5.0E-03f
+#define ABIAS_P_NSE_DEFAULT     3.0E-03f
+#define MAGB_P_NSE_DEFAULT      1.0E-04f
+#define MAGE_P_NSE_DEFAULT      1.0E-03f
 #define VEL_I_GATE_DEFAULT      500
 #define POS_I_GATE_DEFAULT      500
 #define HGT_I_GATE_DEFAULT      500
@@ -86,22 +83,21 @@
 #define FLOW_MEAS_DELAY         10
 #define FLOW_M_NSE_DEFAULT      0.25f
 #define FLOW_I_GATE_DEFAULT     300
-#define CHECK_SCALER_DEFAULT    150
+#define CHECK_SCALER_DEFAULT    100
 
 #else
 // build type not specified, use copter defaults
 #define VELNE_M_NSE_DEFAULT     0.5f
 #define VELD_M_NSE_DEFAULT      0.7f
-#define POSNE_M_NSE_DEFAULT     1.0f
+#define POSNE_M_NSE_DEFAULT     0.5f
 #define ALT_M_NSE_DEFAULT       3.0f
 #define MAG_M_NSE_DEFAULT       0.05f
 #define GYRO_P_NSE_DEFAULT      3.0E-02f
 #define ACC_P_NSE_DEFAULT       6.0E-01f
 #define GBIAS_P_NSE_DEFAULT     1.0E-04f
-#define GSCALE_P_NSE_DEFAULT    5.0E-04f
-#define ABIAS_P_NSE_DEFAULT     5.0E-03f
-#define MAGB_P_NSE_DEFAULT      5.0E-04f
-#define MAGE_P_NSE_DEFAULT      5.0E-03f
+#define ABIAS_P_NSE_DEFAULT     3.0E-03f
+#define MAGB_P_NSE_DEFAULT      1.0E-04f
+#define MAGE_P_NSE_DEFAULT      1.0E-03f
 #define VEL_I_GATE_DEFAULT      500
 #define POS_I_GATE_DEFAULT      500
 #define HGT_I_GATE_DEFAULT      500
@@ -361,13 +357,7 @@ const AP_Param::GroupInfo NavEKF2::var_info[] = {
     // @Units: rad/s/s
     AP_GROUPINFO("GBIAS_P_NSE", 26, NavEKF2, _gyroBiasProcessNoise, GBIAS_P_NSE_DEFAULT),
 
-    // @Param: GSCL_P_NSE
-    // @DisplayName: Rate gyro scale factor stability (1/s)
-    // @Description: This noise controls the rate of gyro scale factor learning. Increasing it makes rate gyro scale factor estimation faster and noisier.
-    // @Range: 0.000001 0.001
-    // @User: Advanced
-    // @Units: 1/s
-    AP_GROUPINFO("GSCL_P_NSE", 27, NavEKF2, _gyroScaleProcessNoise, GSCALE_P_NSE_DEFAULT),
+    // 27 previously used for EK2_GSCL_P_NSE parameter that has been removed
 
     // @Param: ABIAS_P_NSE
     // @DisplayName: Accelerometer bias stability (m/s^3)
@@ -723,12 +713,12 @@ void NavEKF2::getGyroBias(int8_t instance, Vector3f &gyroBias)
     }
 }
 
-// return body axis gyro scale factor error as a percentage
-void NavEKF2::getGyroScaleErrorPercentage(int8_t instance, Vector3f &gyroScale)
+// return acceerometer bias estimate in m/s/s
+void NavEKF2::getAccelBias(int8_t instance, Vector3f &accelBias)
 {
     if (instance < 0 || instance >= num_cores) instance = primary;
     if (core) {
-        core[instance].getGyroScaleErrorPercentage(gyroScale);
+        core[instance].getAccelBias(accelBias);
     }
 }
 
@@ -791,15 +781,6 @@ void NavEKF2::getEkfControlLimits(float &ekfGndSpdLimit, float &ekfNavVelGainSca
 {
     if (core) {
         core[primary].getEkfControlLimits(ekfGndSpdLimit, ekfNavVelGainScaler);
-    }
-}
-
-// return the individual Z-accel bias estimates in m/s^2
-void NavEKF2::getAccelZBias(int8_t instance, float &zbias)
-{
-    if (instance < 0 || instance >= num_cores) instance = primary;
-    if (core) {
-        core[instance].getAccelZBias(zbias);
     }
 }
 

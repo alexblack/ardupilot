@@ -85,9 +85,9 @@ public:
     // An out of range instance (eg -1) returns data for the the primary instance
     void getGyroBias(int8_t instance, Vector3f &gyroBias);
 
-    // return body axis gyro scale factor error as a percentage for the specified instance
+    // return accelerometer bias estimate in m/s/s
     // An out of range instance (eg -1) returns data for the the primary instance
-    void getGyroScaleErrorPercentage(int8_t instance, Vector3f &gyroScale);
+    void getAccelBias(int8_t instance, Vector3f &accelBias);
 
     // return tilt error convergence metric for the specified instance
     // An out of range instance (eg -1) returns data for the the primary instance
@@ -114,10 +114,6 @@ public:
     // return the horizontal speed limit in m/s set by optical flow sensor limits
     // return the scale factor to be applied to navigation velocity gains to compensate for increase in velocity noise with height when using optical flow
     void getEkfControlLimits(float &ekfGndSpdLimit, float &ekfNavVelGainScaler) const;
-
-    // return the Z-accel bias estimate in m/s^2 for the specified instance
-    // An out of range instance (eg -1) returns data for the the primary instance
-    void getAccelZBias(int8_t instance, float &zbias);
 
     // return the NED wind speed estimates in m/s (positive is air moving in the direction of the axis)
     // An out of range instance (eg -1) returns data for the the primary instance
@@ -314,7 +310,6 @@ private:
     AP_Int16  _rngInnovGate;        // Percentage number of standard deviations applied to range finder innovation consistency check
     AP_Float _maxFlowRate;          // Maximum flow rate magnitude that will be accepted by the filter
     AP_Int8 _altSource;             // Primary alt source during optical flow navigation. 0 = use Baro, 1 = use range finder.
-    AP_Float _gyroScaleProcessNoise;// gyro scale factor state process noise : 1/s
     AP_Float _rngNoise;             // Range finder noise : m
     AP_Int8 _gpsCheck;              // Bitmask controlling which preflight GPS checks are bypassed
     AP_Int8 _imuMask;               // Bitmask of IMUs to instantiate EKF2 for

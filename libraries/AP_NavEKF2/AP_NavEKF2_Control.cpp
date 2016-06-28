@@ -152,7 +152,6 @@ void NavEKF2_core::setAidingMode()
     // Start aiding if we have a source of aiding data and the filter attitude algnment is complete
     // Latch to on
     isAiding = ((readyToUseGPS() || useFlowAiding) && filterIsStable) || isAiding;
-
     // check to see if we are starting or stopping aiding and set states and modes as required
     if (isAiding != prevIsAiding) {
         // We have transitioned either into or out of aiding
@@ -215,10 +214,9 @@ void NavEKF2_core::setAidingMode()
 void NavEKF2_core::checkAttitudeAlignmentStatus()
 {
     // Check for tilt convergence - used during initial alignment
-    float alpha = 1.0f*imuDataDelayed.delAngDT;
-    float temp=tiltErrVec.length();
-    tiltErrFilt = alpha*temp + (1.0f-alpha)*tiltErrFilt;
-    if (tiltErrFilt < 0.005f && !tiltAlignComplete) {
+    float alpha = 1.0f;//*imuDataDelayed.delAngDT;
+    tiltErrFilt = alpha*norm(P[0][0],P[1][1],P[2][2],P[3][3]) + (1.0f-alpha)*tiltErrFilt;
+    if (tiltErrFilt < sq(0.03f) && !tiltAlignComplete) {
         tiltAlignComplete = true;
         hal.console->printf("EKF2 IMU%u tilt alignment complete\n",(unsigned)imu_index);
     }
