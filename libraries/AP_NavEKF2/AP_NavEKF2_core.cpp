@@ -540,9 +540,9 @@ void NavEKF2_core::calcOutputStates()
     // apply corrections to the IMU data
     Vector3f delAngNewCorrected;
     Vector3f delVelNewCorrected;
-    if (dt > imuDataNew.delAngDT) {
-        delAngNewCorrected = imuDataNew.delAng - stateStruct.gyro_bias * imuDataNew.delAngDT / dt;
-        delVelNewCorrected = imuDataNew.delVel - stateStruct.accel_bias * imuDataNew.delAngDT / dt;
+    if (dtEkfAvg > imuDataNew.delAngDT) {
+        delAngNewCorrected = imuDataNew.delAng - stateStruct.gyro_bias * imuDataNew.delAngDT / dtEkfAvg;
+        delVelNewCorrected = imuDataNew.delVel - stateStruct.accel_bias * imuDataNew.delAngDT / dtEkfAvg;
     } else {
         delAngNewCorrected = imuDataNew.delAng - stateStruct.gyro_bias;
         delVelNewCorrected = imuDataNew.delVel - stateStruct.accel_bias;
