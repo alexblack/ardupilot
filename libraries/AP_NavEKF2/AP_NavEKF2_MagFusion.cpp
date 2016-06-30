@@ -170,8 +170,18 @@ void NavEKF2_core::realignYawGPS()
         // correct yaw angle using GPS ground course if compass yaw bad
         if (badMagYaw) {
 
+            // calculate the variance for the rotation estimate expressed as a rotation vector
+            // this will be used later to reset the quaternion state covariances
+            Vector3f angleErrVarVec = calcRotVecVariances();
+
             // calculate new filter quaternion states from Euler angles
             stateStruct.quat.from_euler(eulerAngles.x, eulerAngles.y, gpsYaw);
+
+            // set the yaw angle variance to a larger value to reflect the uncertainty in yaw
+            angleErrVarVec.z = sq(radians(45.0f));
+
+            // reset the quaternion covariances using the rotation vector variances
+            initialiseQuatCovariances(angleErrVarVec);
 
             // send yaw alignment information to console
             hal.console->printf("EKF2 IMU%u yaw aligned to GPS velocity\n",(unsigned)imu_index);
