@@ -251,13 +251,24 @@ float Copter::get_land_descent_speed()
         Log_Write_Error(ERROR_SUBSYSTEM_TERRAIN, ERROR_CODE_MISSING_TERRAIN_DATA);
     }
 
+    // calculate constant deceleration speed profile between high and low land speeds
+    float vf = g.land_speed;
+    float vi = fabsf(pos_control.get_speed_down());
+    float a = pos_control.get_accel_z();
+    float xf = LAND_START_ALT;
+    float xi = xf - (pow(vf,2) - pow(vi,2))/(2*a);
+
     // if we are above 10m and the rangefinder does not sense anything perform regular alt hold descent
-    if ((target_alt_cm >= LAND_START_ALT) && !rangefinder_ok) {
+    if ((float(target_alt_cm) >= xi) && !rangefinder_ok) {
         if (g.land_speed_high > 0) {
             // user has asked for a different landing speed than normal descent rate
             return -abs(g.land_speed_high);
         }
         return pos_control.get_speed_down();
+    // if we're somewhere along the constant deceleration profile, linearly interpolate speed
+    }else if ((target_alt_cm >= LAND_START_ALT) && !rangefinder_ok) {
+        return -fabsf(vi + (vf-vi)*(float(target_alt_cm)-xi)/(xf-xi));
+        //return pos_control.get_speed_down();
     }else{
         return -abs(g.land_speed);
     }
