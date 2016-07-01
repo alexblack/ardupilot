@@ -730,6 +730,7 @@ private:
     bool inhibitWindStates;         // true when wind states and covariances are to remain constant
     bool inhibitMagStates;          // true when magnetic field states are inactive
     bool inhibitDelVelBiasStates;   // true when delta velocity bias states are inactive
+    bool inhibitDelAngBiasStates;
     bool gpsNotAvailable;           // bool true when valid GPS data is not available
     bool isAiding;                  // true when the filter is fusing position, velocity or flow measurements
     bool prevIsAiding;              // isAiding from previous frame

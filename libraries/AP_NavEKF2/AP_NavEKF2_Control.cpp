@@ -131,6 +131,15 @@ void NavEKF2_core::setWindMagStateLearningMode()
         P[15][15] = P[13][13];
     }
 
+    if (tiltAlignComplete && inhibitDelAngBiasStates) {
+        // activate the states
+        inhibitDelAngBiasStates = false;
+        // set the initial covariance values
+        P[10][10] = sq(radians(InitialGyroBiasUncertainty() * dtEkfAvg));
+        P[11][11] = P[10][10];
+        P[12][12] = P[10][10];
+    }
+
     // If on ground we clear the flag indicating that the magnetic field in-flight initialisation has been completed
     // because we want it re-done for each takeoff
     if (onGround) {

@@ -180,6 +180,7 @@ void NavEKF2_core::InitialiseVariables()
     inhibitWindStates = true;
     inhibitMagStates = true;
     inhibitDelVelBiasStates = true;
+    inhibitDelAngBiasStates = true;
     gndOffsetValid =  false;
     validOrigin = false;
     takeoffExpectedSet_ms = 0;
@@ -808,6 +809,11 @@ void NavEKF2_core::CovariancePrediction()
     SPP[8] = 2.0f*q0*q3 + 2.0f*q1*q2;
     SPP[9] = 2.0f*q0*q2 + 2.0f*q1*q3;
     SPP[10] = SF[16];
+
+    if (inhibitDelAngBiasStates) {
+        zeroRows(P,10,12);
+        zeroCols(P,10,12);
+    }
 
     if (inhibitDelVelBiasStates) {
         zeroRows(P,13,15);
