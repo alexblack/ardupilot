@@ -121,6 +121,16 @@ void NavEKF2_core::setWindMagStateLearningMode()
         }
     }
 
+    // inhibit delta velocity bias learning if we have not yet aligned the tilt
+    if (tiltAlignComplete && inhibitDelVelBiasStates) {
+        // activate the states
+        inhibitDelVelBiasStates = false;
+        // set the initial covariance values
+        P[13][13] = sq(INIT_ACCEL_BIAS_UNCERTAINTY * dtEkfAvg);
+        P[14][14] = P[13][13];
+        P[15][15] = P[13][13];
+    }
+
     // If on ground we clear the flag indicating that the magnetic field in-flight initialisation has been completed
     // because we want it re-done for each takeoff
     if (onGround) {
@@ -130,7 +140,9 @@ void NavEKF2_core::setWindMagStateLearningMode()
 
     // Adjust the indexing limits used to address the covariance, states and other EKF arrays to avoid unnecessary operations
     // if we are not using those states
-    if (inhibitMagStates && inhibitWindStates) {
+    if (inhibitMagStates && inhibitWindStates && inhibitDelVelBiasStates) {
+        stateIndexLim = 12;
+    } else if (inhibitMagStates && !inhibitWindStates) {
         stateIndexLim = 15;
     } else if (inhibitWindStates) {
         stateIndexLim = 21;

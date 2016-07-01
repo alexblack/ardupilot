@@ -13,18 +13,6 @@
 
 extern const AP_HAL::HAL& hal;
 
-#define earthRate 0.000072921f // earth rotation rate (rad/sec)
-
-// when the wind estimation first starts with no airspeed sensor,
-// assume 3m/s to start
-#define STARTUP_WIND_SPEED 3.0f
-
-// initial imu bias 1-sigma uncertainty (m/s/s)
-#define INIT_ACCEL_BIAS_UNCERTAINTY 0.25f
-
-// maximum allowed gyro bias (rad/sec)
-#define GYRO_BIAS_LIMIT 0.5f
-
 // constructor
 NavEKF2_core::NavEKF2_core(void) :
     stateStruct(*reinterpret_cast<struct state_elements *>(&statesArray)),
@@ -191,6 +179,7 @@ void NavEKF2_core::InitialiseVariables()
     manoeuvring = false;
     inhibitWindStates = true;
     inhibitMagStates = true;
+    inhibitDelVelBiasStates = true;
     gndOffsetValid =  false;
     validOrigin = false;
     takeoffExpectedSet_ms = 0;
@@ -820,10 +809,17 @@ void NavEKF2_core::CovariancePrediction()
     SPP[9] = 2.0f*q0*q2 + 2.0f*q1*q3;
     SPP[10] = SF[16];
 
+    if (inhibitDelVelBiasStates) {
+        zeroRows(P,13,15);
+        zeroCols(P,13,15);
+    }
+
     if (inhibitMagStates) {
         zeroRows(P,16,21);
         zeroCols(P,16,21);
-    } else if (inhibitWindStates) {
+    }
+
+    if (inhibitWindStates) {
         zeroRows(P,22,23);
         zeroCols(P,22,23);
     }

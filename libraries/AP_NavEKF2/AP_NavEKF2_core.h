@@ -40,6 +40,18 @@
 #define MASK_GPS_VERT_SPD   (1<<6)
 #define MASK_GPS_HORIZ_SPD  (1<<7)
 
+#define earthRate 0.000072921f // earth rotation rate (rad/sec)
+
+// when the wind estimation first starts with no airspeed sensor,
+// assume 3m/s to start
+#define STARTUP_WIND_SPEED 3.0f
+
+// initial imu bias error (m/s/s)
+#define INIT_ACCEL_BIAS_UNCERTAINTY 0.05f
+
+// maximum allowed gyro bias (rad/sec)
+#define GYRO_BIAS_LIMIT 0.5f
+
 class AP_AHRS;
 
 class NavEKF2_core
@@ -716,7 +728,8 @@ private:
     Vector3f magTestRatio;          // sum of squares of magnetometer innovations divided by fail threshold
     float tasTestRatio;             // sum of squares of true airspeed innovation divided by fail threshold
     bool inhibitWindStates;         // true when wind states and covariances are to remain constant
-    bool inhibitMagStates;          // true when magnetic field states and covariances are to remain constant
+    bool inhibitMagStates;          // true when magnetic field states are inactive
+    bool inhibitDelVelBiasStates;   // true when delta velocity bias states are inactive
     bool gpsNotAvailable;           // bool true when valid GPS data is not available
     bool isAiding;                  // true when the filter is fusing position, velocity or flow measurements
     bool prevIsAiding;              // isAiding from previous frame
