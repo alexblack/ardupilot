@@ -144,7 +144,7 @@ void NavEKF2_core::InitialiseVariables()
     finalInflightYawInit = false;
     finalInflightMagInit = false;
     dtIMUavg = 0.0025f;
-    dtEkfAvg = 0.01f;
+    dtEkfAvg = EKF_TARGET_DT;
     dt = 0;
     velDotNEDfilt.zero();
     lastKnownPositionNE.zero();
@@ -278,7 +278,6 @@ bool NavEKF2_core::InitialiseFilterBootstrap(void)
 
     // Initialise IMU data
     dtIMUavg = _ahrs->get_ins().get_loop_delta_t();
-    dtEkfAvg = MIN(0.01f,dtIMUavg);
     readIMUData();
     storedIMU.reset_history(imuDataNew);
     imuDataDelayed = imuDataNew;
