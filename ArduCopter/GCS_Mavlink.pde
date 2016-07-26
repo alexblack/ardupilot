@@ -944,7 +944,11 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
         pmTest1++;
         break;
     }
-
+    case MAVLINK_MSG_ID_PING:
+    {
+        mavlink_msg_ping_send(chan, hal.scheduler->micros(),0,0,0);
+        break;
+    }
     case MAVLINK_MSG_ID_SET_MODE:       // MAV ID: 11
     {
         if (!failsafe.radio) {
