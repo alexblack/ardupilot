@@ -17,9 +17,6 @@ RUN wget https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
 RUN unzip awscli-bundle.zip
 RUN ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
 
-ENV AWS_ACCESS_KEY_ID AKIAIXZSSSC5UZIXN4DA
-ENV AWS_SECRET_ACCESS_KEY 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
-
 # Get our code
 ADD . /home/dev/ardupilot
 WORKDIR /home/dev/ardupilot/ArduCopter
