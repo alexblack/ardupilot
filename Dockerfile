@@ -33,9 +33,6 @@ RUN mv ./ArduCopter.elf ./ArduCopter-ubuntu.elf
 ENV AWS_ACCESS_KEY_ID ${AWS_ACCESS_KEY_ID}
 ENV AWS_SECRET_ACCESS_KEY ${AWS_SECRET_ACCESS_KEY}
 
-RUN echo $AWS_ACCESS_KEY_ID
-RUN echo $AWS_SECRET_ACCESS_KEY
-
 # Upload to S3
 WORKDIR /home/dev/ardupilot/ArduCopter
 RUN git rev-parse --abbrev-ref HEAD | xargs -I {} aws s3 cp ./ArduCopter-v2.px4 s3://heleport-dev/ardupilot/{}/
