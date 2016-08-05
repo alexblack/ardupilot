@@ -1,4 +1,7 @@
 FROM ubuntu:14.04
+ARG AWS_ACCESS_KEY_ID
+ARG AWS_SECRET_ACCESS_KEY
+
 # prereqs
 RUN apt-get update && apt-get install --yes git build-essential software-properties-common
 RUN add-apt-repository ppa:george-edison55/cmake-3.x -y
@@ -17,18 +20,21 @@ RUN wget https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
 RUN unzip awscli-bundle.zip
 RUN ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
 
+# Get our code
+ADD . /home/dev/ardupilot
+WORKDIR /home/dev/ardupilot
+RUN git submodule sync
+RUN git submodule update --init
+WORKDIR /home/dev/ardupilot/ArduCopter
+RUN make px4-v2
+RUN make sitl
+RUN mv ./ArduCopter.elf ./ArduCopter-ubuntu.elf
+
 ENV AWS_ACCESS_KEY_ID ${AWS_ACCESS_KEY_ID}
 ENV AWS_SECRET_ACCESS_KEY ${AWS_SECRET_ACCESS_KEY}
 
 RUN echo $AWS_ACCESS_KEY_ID
 RUN echo $AWS_SECRET_ACCESS_KEY
-
-# Get our code
-ADD . /home/dev/ardupilot
-WORKDIR /home/dev/ardupilot/ArduCopter
-RUN make px4-v2
-RUN make sitl
-RUN mv ./ArduCopter.elf ./ArduCopter-ubuntu.elf
 
 # Upload to S3
 WORKDIR /home/dev/ardupilot/ArduCopter

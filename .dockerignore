@@ -2,3 +2,4 @@ mav.*
 build
 docker
 circle.yml
+Dockerfile
