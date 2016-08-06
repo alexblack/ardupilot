@@ -1451,9 +1451,9 @@ void DataFlash_Class::Log_Write_EKF2(AP_AHRS_NavEKF &ahrs, bool optFlowEnabled)
         normInnov : (uint16_t)(100*normInnov),
         VIX : (float)(visPosInnovX),
         VIY : (float)(visPosInnovY),
-        angErr : (float)(visPosInnovZ),
-        velErr : (float)predictorErrors.y,
-        posErr : (float)predictorErrors.z
+        VIZ : (float)(visPosInnovZ),
+        target_yaw : 0.0f,
+        unused : 0.0f
     };
     WriteBlock(&vpkf, sizeof(vpkf));
 

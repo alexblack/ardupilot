@@ -23,14 +23,13 @@ void AP_VisPos_MAVLink::handle_raw_vispos_report(mavlink_channel_t chan, mavlink
 	struct log_VPOS pkt_vispos = {
 	    LOG_PACKET_HEADER_INIT(LOG_VPOS_MSG),
 	    time_us 		:	AP_HAL::micros(),
-	    sample_time_us	:	pkt.time_boot_ms,	
+	    sample_time_us	:	pkt.time_boot_ms,
 	    x				:	pkt.x,
-	    y 				:	pkt.y,
+	    y 			:	pkt.y,
 	    z				:	pkt.z,
-	    q0				:	0,
-	    q1				:	0,
-	    q2				:	0,
-	    q3				:	0
+	    roll		:	pkt.vx,
+	    pitch		:	pkt.vy,
+	    yaw			:	pkt.vz
     };
     Vector3f rotated_pos;
     Matrix3f rot_mat( 0.0, 0.0,  1.0,

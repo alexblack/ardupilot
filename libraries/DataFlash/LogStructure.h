@@ -220,10 +220,9 @@ struct PACKED log_VPOS {
     float x;
     float y;
     float z;
-    float q0;
-    float q1;
-    float q2;
-    float q3;
+    float roll;
+    float pitch;
+    float yaw;
 };
 
 struct PACKED log_POWR {
@@ -390,9 +389,9 @@ struct PACKED log_VPKF {
     uint16_t normInnov;
     float VIX;
     float VIY;
-    float angErr;
-    float velErr;
-    float posErr;
+    float VIZ;
+    float target_yaw;
+    float unused;
 };
 
 struct PACKED log_Cmd {
@@ -838,7 +837,7 @@ Format characters in the format string for binary log messages
     { LOG_NKF5_MSG, sizeof(log_NKF5), \
       "NKF5","QBhhhcccCCfff","TimeUS,NI,FIX,FIY,AFI,HAGL,offset,RI,rng,Herr,eAng,eVel,ePos" }, \
     { LOG_VPKF_MSG, sizeof(log_VPKF), \
-      "VPKF","Qhfffff","TimeUS,NI,VIX,VIY,eAng,eVel,ePos" }, \
+      "VPKF","Qhffff","TimeUS,NI,VIX,VIY,TYaw,unused" }, \
     { LOG_NKF6_MSG, sizeof(log_EKF1), \
       "NKF6","QccCfffffffccc","TimeUS,Roll,Pitch,Yaw,VN,VE,VD,dPD,PN,PE,PD,GX,GY,GZ" }, \
     { LOG_NKF7_MSG, sizeof(log_NKF2), \
@@ -932,7 +931,7 @@ Format characters in the format string for binary log messages
     { LOG_RATE_MSG, sizeof(log_Rate), \
       "RATE", "Qffffffffffff",  "TimeUS,RDes,R,ROut,PDes,P,POut,YDes,Y,YOut,ADes,A,AOut" }, \
     { LOG_VPOS_MSG, sizeof(log_VPOS), \
-      "VPOS", "QQfffffff", "TimeUS,SampleUS,x,y,z,q0,q1,q2,q3" }
+      "VPOS", "QQffffff", "TimeUS,SampleUS,x,y,z,roll,pitch,yaw" }
 
 // #if SBP_HW_LOGGING
 #define LOG_SBP_STRUCTURES \
