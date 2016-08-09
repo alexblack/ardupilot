@@ -39,12 +39,13 @@ void NavEKF2_core::SelectVisPosFusion()
     hal.util->perf_begin(_perf_FuseVisPos);
     // Perform Data Checks
     // Check if the visPos data is still valid
-    visPosDataValid = ((imuSampleTime_ms - visPosValidMeaTime_ms) < 1000);
+    // visPosDataValid = ((imuSampleTime_ms - visPosValidMeaTime_ms) < 1000);
     // Check if the visPos sensor has timed out
-    bool visPosSensorTimeout = ((imuSampleTime_ms - visPosValidMeaTime_ms) > 5000);
+    bool visPosSensorTimeout = ((imuSampleTime_ms - visPosValidMeaTime_ms) > 500);
     // Check if the fusion has timed out (visPos measurements have been rejected for too long)
-    bool visPosFusionTimeout = ((imuSampleTime_ms - prevVisPosFuseTime_ms) > 5000);
+    bool visPosFusionTimeout = ((imuSampleTime_ms - prevVisPosFuseTime_ms) > 500);
 
+    visPosDataValid = !(visPosSensorTimeout || visPosFusionTimeout) && target_pos_set;
     // If the visPos measurements have been rejected for too long and we are relying on them, then revert to constant position mode
     if ((visPosSensorTimeout || visPosFusionTimeout) && PV_AidingMode == AID_VISPOS) {
         PV_AidingMode = AID_NONE;
@@ -91,6 +92,7 @@ void NavEKF2_core::FuseVisPos()
         if(stateStruct.position.z > -1.0f) {     //do not initialise if altitude is below half meter
             return;
         }
+        printf("EKF: VisPos Target Position set!\n");
         target_pos_ef = Tnb_vispos*visPosDataDelayed.pos+stateStruct.position;
         target_pos_set = true;
     }

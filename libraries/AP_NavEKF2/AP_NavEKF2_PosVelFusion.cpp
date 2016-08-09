@@ -183,7 +183,7 @@ void NavEKF2_core::SelectVelPosFusion()
     readGpsData();
     gpsDataToFuse = storedGPS.recall(gpsDataDelayed,imuDataDelayed.time_ms);
     // Determine if we need to fuse position and velocity data on this time step
-    if (gpsDataToFuse && PV_AidingMode == AID_ABSOLUTE) {
+    if (gpsDataToFuse && PV_AidingMode == AID_ABSOLUTE && !(visPosDataValid)) {
         // Don't fuse velocity data if GPS doesn't support it
         if (frontend->_fusionModeGPS <= 1) {
             fuseVelData = true;
