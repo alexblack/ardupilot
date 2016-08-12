@@ -837,7 +837,7 @@ Format characters in the format string for binary log messages
     { LOG_NKF5_MSG, sizeof(log_NKF5), \
       "NKF5","QBhhhcccCCfff","TimeUS,NI,FIX,FIY,AFI,HAGL,offset,RI,rng,Herr,eAng,eVel,ePos" }, \
     { LOG_VPKF_MSG, sizeof(log_VPKF), \
-      "VPKF","Qhffff","TimeUS,NI,VIX,VIY,TYaw,unused" }, \
+      "VPKF","Qhfffff","TimeUS,NI,VIX,VIY,VIZ,TYaw,unused" }, \
     { LOG_NKF6_MSG, sizeof(log_EKF1), \
       "NKF6","QccCfffffffccc","TimeUS,Roll,Pitch,Yaw,VN,VE,VD,dPD,PN,PE,PD,GX,GY,GZ" }, \
     { LOG_NKF7_MSG, sizeof(log_NKF2), \

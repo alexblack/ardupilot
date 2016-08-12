@@ -41,9 +41,15 @@ void NavEKF2_core::SelectVisPosFusion()
     // Check if the visPos data is still valid
     visPosDataValid = ((imuSampleTime_ms - visPosValidMeaTime_ms) < 1000);
     // Check if the visPos sensor has timed out
-    bool visPosSensorTimeout = ((imuSampleTime_ms - visPosValidMeaTime_ms) > 5000);
+    bool visPosSensorTimeout = ((imuSampleTime_ms - visPosValidMeaTime_ms) > 500);
     // Check if the fusion has timed out (visPos measurements have been rejected for too long)
-    bool visPosFusionTimeout = ((imuSampleTime_ms - prevVisPosFuseTime_ms) > 5000);
+    bool visPosFusionTimeout = ((imuSampleTime_ms - prevVisPosFuseTime_ms) > 500);
+
+    // Reset Position if vispos data is not available for sometime
+    if ((visPosSensorTimeout || visPosFusionTimeout) && target_pos_set) {
+        ResetPosition();
+        target_pos_set = false;
+    }
 
     // If the visPos measurements have been rejected for too long and we are relying on them, then revert to constant position mode
     if ((visPosSensorTimeout || visPosFusionTimeout) && PV_AidingMode == AID_VISPOS) {
