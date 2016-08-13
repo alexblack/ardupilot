@@ -25,6 +25,9 @@ static bool target_pos_set;
 // select fusion of Visual Position measurements
 void NavEKF2_core::SelectVisPosFusion()
 {
+    if(core_index != 0) {
+        return;
+    }
     // Check if the magnetometer has been fused on that time step and the filter is running at faster than 200 Hz
     // If so, don't fuse measurements on this time step to reduce frame over-runs
     // Only allow one time slip to prevent high rate magnetometer data preventing fusion of other measurements
@@ -39,15 +42,16 @@ void NavEKF2_core::SelectVisPosFusion()
     hal.util->perf_begin(_perf_FuseVisPos);
     // Perform Data Checks
     // Check if the visPos data is still valid
-    visPosDataValid = ((imuSampleTime_ms - visPosValidMeaTime_ms) < 1000);
+    // visPosDataValid = ((imuSampleTime_ms - visPosValidMeaTime_ms) < 1000);
     // Check if the visPos sensor has timed out
     bool visPosSensorTimeout = ((imuSampleTime_ms - visPosValidMeaTime_ms) > 500);
     // Check if the fusion has timed out (visPos measurements have been rejected for too long)
     bool visPosFusionTimeout = ((imuSampleTime_ms - prevVisPosFuseTime_ms) > 500);
 
+    visPosDataValid = !(visPosSensorTimeout || visPosFusionTimeout) && target_pos_set;
+
     // Reset Position if vispos data is not available for sometime
     if ((visPosSensorTimeout || visPosFusionTimeout) && target_pos_set) {
-        ResetPosition();
         target_pos_set = false;
     }
 
@@ -94,12 +98,23 @@ void NavEKF2_core::FuseVisPos()
     // calculate relative position in sensor frame
     stateStruct.quat.rotation_matrix(Tnb_vispos);
     if(!target_pos_set) {
-        if(stateStruct.position.z > -1.0f) {     //do not initialise if altitude is below half meter
-            return;
-        }
+        //if(stateStruct.position.z > -1.0f) {     //do not initialise if altitude is below half meter
+        //    return;
+        //}
+        target_pos_ef.zero();
+        hal.console->printf("Reset VPS Pos\n");
         target_pos_ef = Tnb_vispos*visPosDataDelayed.pos+stateStruct.position;
         target_pos_set = true;
-    }
+    } /*else {
+        //gps pos reset
+        Vector2f gps_pos;
+        float baroalt, gpsalt; 
+        gps_pos.x = gpsDataNew.pos.x;
+        gps_pos.y = gpsDataNew.pos.y;
+        visPosGPSAltReset = gpsDataNew.hgt + stateStruct.position.z;
+        visPosBaroAltReset = baroDataNew.hgt - baroHgtOffset + stateStruct.position.z;
+        visPosGPSReset = gps_pos - Vector2f(stateStruct.position.x,stateStruct.position.y);
+    }*/
     //Vector3f meas_abs_pos = target_pos_ef-Tnb_vispos*visPosDataDelayed.pos;
     Vector3f pos_bf = (Tnb_vispos.transposed())*(target_pos_ef-stateStruct.position);
     lpos[0] = pos_bf.x;
@@ -108,12 +123,6 @@ void NavEKF2_core::FuseVisPos()
     //hal.console->printf("\n");
     // Fuse X and Y axis measurements sequentially assuming observation errors are uncorrelated
     for (int8_t obsIndex=0; obsIndex<=2; obsIndex++) { // fuse X axis data first
-
-        if(core_index ==0)
-        {       //hal.console->printf("Meas: %f %f Data Before: %f %f\n", visPosDataDelayed.pos.x,visPosDataDelayed.pos.y , pos_bf.x, pos_bf.y);
-                //hal.console->printf("Obs Index %u \n", obsIndex);
-                //hal.console->printf("quaternion: %f %f %f %f\n",q0,q1,q2,q3 );
-        }
         // calculate observation jacobians and Kalman gains
         memset(&H_LPOS[0], 0, sizeof(H_LPOS));
         if (obsIndex == 0) {

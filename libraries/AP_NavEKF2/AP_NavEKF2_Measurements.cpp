@@ -471,7 +471,7 @@ void NavEKF2_core::readGpsData()
 
             // convert GPS measurements to local NED and save to buffer to be fused later if we have a valid origin
             if (validOrigin) {
-                gpsDataNew.pos = location_diff(EKF_origin, gpsloc);
+                gpsDataNew.pos = location_diff(EKF_origin, gpsloc) - visPosGPSReset;
                 gpsDataNew.hgt = 0.01f * (gpsloc.alt - EKF_origin.alt);
                 storedGPS.push(gpsDataNew);
                 // declare GPS available for use

@@ -143,6 +143,9 @@ void NavEKF2_core::InitialiseVariables()
     visPosValidMeaTime_ms = imuSampleTime_ms;
     visPosMeaTime_ms = 0;
     prevVisPosFuseTime_ms = imuSampleTime_ms;
+    visPosGPSReset.zero();
+    visPosGPSAltReset = 0.0f;
+    visPosBaroAltReset = 0.0f;
     gndHgtValidTime_ms = 0;
     ekfStartTime_ms = imuSampleTime_ms;
     lastGpsVelFail_ms = 0;

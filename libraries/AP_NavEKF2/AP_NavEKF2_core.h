@@ -865,6 +865,9 @@ private:
     obs_ring_buffer_t<vp_elements> storedVP;    // VP data buffer
     vp_elements visPosDataNew;          // OF data at the current time horizon
     vp_elements visPosDataDelayed;      // OF data at the fusion time horizon
+    Vector2f visPosGPSReset;
+    float visPosGPSAltReset;
+    float visPosBaroAltReset;
     float R_LPOS;
 
     // variables added for optical flow fusion
