@@ -157,6 +157,20 @@ struct PACKED log_RCIN {
     uint16_t chan14;
 };
 
+struct PACKED log_VPGuided
+{
+    LOG_PACKET_HEADER;
+    uint64_t time_us;
+    float tx;
+    float ty;
+    float tz;
+    float tyaw;
+    float cx;
+    float cy;
+    float cz;
+    float cyaw;
+};
+
 struct PACKED log_RCOUT {
     LOG_PACKET_HEADER;
     uint64_t time_us;
@@ -931,7 +945,9 @@ Format characters in the format string for binary log messages
     { LOG_RATE_MSG, sizeof(log_Rate), \
       "RATE", "Qffffffffffff",  "TimeUS,RDes,R,ROut,PDes,P,POut,YDes,Y,YOut,ADes,A,AOut" }, \
     { LOG_VPOS_MSG, sizeof(log_VPOS), \
-      "VPOS", "QQffffff", "TimeUS,SampleUS,x,y,z,roll,pitch,yaw" }
+      "VPOS", "QQffffff", "TimeUS,SampleUS,x,y,z,roll,pitch,yaw"}, \
+    { LOG_VPOS_GDE, sizeof(log_VPGuided), \
+      "VGDE","Qffffffff", "TimeUS,tx,ty,tz,tyaw,cx,cy,cz,cyaw" }
 
 // #if SBP_HW_LOGGING
 #define LOG_SBP_STRUCTURES \
@@ -1048,6 +1064,7 @@ enum LogMessages {
     LOG_RATE_MSG,
     LOG_VPOS_MSG,
     LOG_VPKF_MSG,
+    LOG_VPOS_GDE,
 };
 
 enum LogOriginType {

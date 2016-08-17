@@ -1707,9 +1707,9 @@ void GCS_MAVLINK_Copter::handleMessage(mavlink_message_t* msg)
             break;
         }
 
-        bool pos_ignore      = packet.type_mask & MAVLINK_SET_POS_TYPE_MASK_POS_IGNORE;
-        bool vel_ignore      = packet.type_mask & MAVLINK_SET_POS_TYPE_MASK_VEL_IGNORE;
-        bool acc_ignore      = packet.type_mask & MAVLINK_SET_POS_TYPE_MASK_ACC_IGNORE;
+        bool pos_ignore      = false;//packet.type_mask & MAVLINK_SET_POS_TYPE_MASK_POS_IGNORE;
+        bool vel_ignore      = true;//packet.type_mask & MAVLINK_SET_POS_TYPE_MASK_VEL_IGNORE;
+        bool acc_ignore      = true;//packet.type_mask & MAVLINK_SET_POS_TYPE_MASK_ACC_IGNORE;
 
         /*
          * for future use:
@@ -1736,10 +1736,24 @@ void GCS_MAVLINK_Copter::handleMessage(mavlink_message_t* msg)
             } else if(packet.coordinate_frame == MAV_FRAME_VISPOS_TARGET) {
                 float target_yaw = copter.vispos.get_target_yaw();
                 Vector3f target_pos = copter.vispos.get_target_pos();
-                pos_vector.x = packet.x*cos(target_yaw) - packet.y*sin(target_yaw) + target_pos.x*100.0f;
-                pos_vector.y = packet.x*sin(target_yaw) + packet.y*cos(target_yaw) + target_pos.y*100.0f;
-                pos_vector.z = packet.z + target_pos.z*100.0f;
-                //hal.console->printf("Received Message: %f %f %f\n", pos_vector.x, pos_vector.y, pos_vector.z);
+                pos_vector.x = packet.x*cos(target_yaw) - packet.y*sin(target_yaw);
+                pos_vector.y = packet.x*sin(target_yaw) + packet.y*cos(target_yaw);
+                pos_vector.z = -packet.z;
+                pos_vector = (pos_vector + target_pos)*100.0f;
+                struct log_VPGuided pkt = {
+                    LOG_PACKET_HEADER_INIT(LOG_VPOS_GDE),
+                    time_us  : AP_HAL::micros64(),
+                    tx    : (float)target_pos.x,
+                    ty    : (float)target_pos.y,
+                    tz    : (float)target_pos.z,
+                    tyaw    : (float)target_yaw,
+                    cx    : (float)pos_vector.z,
+                    cy    : (float)pos_vector.y,
+                    cz    : (float)pos_vector.z,
+                    cyaw    : 0.0f
+                };
+                copter.DataFlash.WriteBlock(&pkt, sizeof(pkt));
+                //hal.console->printf("Received Message: %f %f %f %f\n", pos_vector.x, pos_vector.y, pos_vector.z, degrees(target_yaw));
             }else {
                 // convert from alt-above-home to alt-above-ekf-origin
                 pos_vector.z = copter.pv_alt_above_origin(pos_vector.z);
