@@ -1738,8 +1738,9 @@ void GCS_MAVLINK_Copter::handleMessage(mavlink_message_t* msg)
                 Vector3f target_pos = copter.vispos.get_target_pos();
                 pos_vector.x = packet.x*cos(target_yaw) - packet.y*sin(target_yaw);
                 pos_vector.y = packet.x*sin(target_yaw) + packet.y*cos(target_yaw);
-                pos_vector.z = -packet.z;
+                pos_vector.z = packet.z;
                 pos_vector = (pos_vector + target_pos)*100.0f;
+                pos_vector.z = -pos_vector.z;
                 struct log_VPGuided pkt = {
                     LOG_PACKET_HEADER_INIT(LOG_VPOS_GDE),
                     time_us  : AP_HAL::micros64(),
