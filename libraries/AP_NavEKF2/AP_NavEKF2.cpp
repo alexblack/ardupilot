@@ -1156,6 +1156,13 @@ bool NavEKF2::getHeightControlLimit(float &height) const
     return core[primary].getHeightControlLimit(height);
 }
 
+Vector3f NavEKF2::get_vp_target_pos() {
+    if (!core) {
+        return Vector3f(0,0,0);
+    }
+    return core[primary].get_vp_target_pos();
+}
+
 // return the amount of yaw angle change due to the last yaw angle reset in radians
 // returns the time of the last yaw angle reset or 0 if no reset has ever occurred
 uint32_t NavEKF2::getLastYawResetAngle(float &yawAng) const

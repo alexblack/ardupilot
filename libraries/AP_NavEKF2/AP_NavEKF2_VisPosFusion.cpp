@@ -85,7 +85,6 @@ void NavEKF2_core::FuseVisPos()
 {
     Vector24 H_LPOS;
     Vector3 lpos;
-    static Vector3f target_pos_ef;
     // Copy required states to local variable names
     float q0  = stateStruct.quat[0];
     float q1 = stateStruct.quat[1];

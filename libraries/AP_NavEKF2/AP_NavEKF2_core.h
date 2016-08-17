@@ -187,6 +187,8 @@ public:
 
     void getVisPosDebug(float &varVisPos, float &visPosInnovX, float &visPosInnovY, float &visPosInnovZ);
 
+    Vector3f get_vp_target_pos();
+
     // called by vehicle code to specify that a takeoff is happening
     // causes the EKF to compensate for expected barometer errors due to ground effect
     void setTakeoffExpected(bool val);
@@ -854,6 +856,7 @@ private:
     Vector3 flowTestRatio;          // square of Visual Position innovations divided by fail threshold used by main filter where >1.0 is a fail
     Vector3 visPosTestRatio;        // square of visual Position innovations divided by fail threshold used by main filter where >1.0 is a fail
     Vector3f debug_pos;
+    Vector3f target_pos_ef;
     bool visPosDataToFuse;          // true when Visual Position data has is ready for fusion
     bool visPosDataValid;           // true while Visual Position data is still fresh
     bool visPosFusionDelayed;

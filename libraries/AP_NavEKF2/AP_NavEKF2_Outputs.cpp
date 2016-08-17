@@ -87,6 +87,9 @@ void NavEKF2_core::getVisPosDebug(float &varVisPos, float &visPosInnovX, float &
     visPosInnovZ = innovVisPos[2];
 }
 
+Vector3f NavEKF2_core::get_vp_target_pos() {
+    return target_pos_ef;
+}
 // provides the height limit to be observed by the control loops
 // returns false if no height limiting is required
 // this is needed to ensure the vehicle does not fly too high when using optical flow navigation

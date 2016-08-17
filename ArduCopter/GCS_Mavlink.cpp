@@ -1684,6 +1684,7 @@ void GCS_MAVLINK_Copter::handleMessage(mavlink_message_t* msg)
     case MAVLINK_MSG_ID_LOCAL_POSITION_NED:
     {
         copter.vispos.handle_raw_vispos_report(chan, msg);
+        break;
     }
 
     case MAVLINK_MSG_ID_SET_POSITION_TARGET_LOCAL_NED:     // MAV ID: 84
@@ -1701,7 +1702,8 @@ void GCS_MAVLINK_Copter::handleMessage(mavlink_message_t* msg)
         if (packet.coordinate_frame != MAV_FRAME_LOCAL_NED &&
             packet.coordinate_frame != MAV_FRAME_LOCAL_OFFSET_NED &&
             packet.coordinate_frame != MAV_FRAME_BODY_NED &&
-            packet.coordinate_frame != MAV_FRAME_BODY_OFFSET_NED) {
+            packet.coordinate_frame != MAV_FRAME_BODY_OFFSET_NED &&
+            packet.coordinate_frame != MAV_FRAME_VISPOS_TARGET) {
             break;
         }
 
@@ -1731,7 +1733,14 @@ void GCS_MAVLINK_Copter::handleMessage(mavlink_message_t* msg)
                 packet.coordinate_frame == MAV_FRAME_BODY_NED ||
                 packet.coordinate_frame == MAV_FRAME_BODY_OFFSET_NED) {
                 pos_vector += copter.inertial_nav.get_position();
-            } else {
+            } else if(packet.coordinate_frame == MAV_FRAME_VISPOS_TARGET) {
+                float target_yaw = copter.vispos.get_target_yaw();
+                Vector3f target_pos = copter.vispos.get_target_pos();
+                pos_vector.x = packet.x*cos(target_yaw) - packet.y*sin(target_yaw);
+                pos_vector.y = packet.x*sin(target_yaw) + packet.y*cos(target_yaw);
+                pos_vector += target_pos;
+                //hal.console->printf("Received Message: %f %f %f\n", pos_vector.x, pos_vector.y, pos_vector.z);
+            }else {
                 // convert from alt-above-home to alt-above-ekf-origin
                 pos_vector.z = copter.pv_alt_above_origin(pos_vector.z);
             }

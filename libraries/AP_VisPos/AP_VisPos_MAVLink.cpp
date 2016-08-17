@@ -14,6 +14,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "AP_VisPos_MAVLink.h"
+#include <AP_Math/AP_Math.h>
 extern const AP_HAL::HAL& hal;
 
 void AP_VisPos_MAVLink::handle_raw_vispos_report(mavlink_channel_t chan, mavlink_message_t *msg)
@@ -30,12 +31,13 @@ void AP_VisPos_MAVLink::handle_raw_vispos_report(mavlink_channel_t chan, mavlink
 	    roll		:	pkt.vx,
 	    pitch		:	pkt.vy,
 	    yaw			:	pkt.vz
-    };
-    Vector3f rotated_pos;
-    Matrix3f rot_mat( 0.0, 0.0,  1.0,
-    				          1.0, 0.0,  0.0,
-                      0.0, 1.0,  0.0);
-    rotated_pos = rot_mat*Vector3f(pkt.x,pkt.y,pkt.z);
-    _frontend->_dataflash.WriteBlock(&pkt_vispos, sizeof(pkt_vispos));
+  };
+  Vector3f rotated_pos;
+  Matrix3f rot_mat( 0.0, 0.0,  1.0,
+    				        1.0, 0.0,  0.0,
+                    0.0, 1.0,  0.0);
+  rotated_pos = rot_mat*Vector3f(pkt.x,pkt.y,pkt.z);
+  target_yaw = M_PI_F + pkt_vispos.yaw + _frontend->_ahrs.yaw;
+  _frontend->_dataflash.WriteBlock(&pkt_vispos, sizeof(pkt_vispos));
 	_frontend->_ahrs.get_NavEKF2().writeVisPosMeas(Vector3f(rotated_pos.x,rotated_pos.y,rotated_pos.z), pkt.time_boot_ms);
 }

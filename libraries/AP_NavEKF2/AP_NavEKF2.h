@@ -250,6 +250,8 @@ public:
     */
     void  getFilterStatus(int8_t instance, nav_filter_status &status);
 
+    Vector3f get_vp_target_pos();
+
     // send an EKF_STATUS_REPORT message to GCS
     void send_status_report(mavlink_channel_t chan);
 

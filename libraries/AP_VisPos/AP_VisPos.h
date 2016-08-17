@@ -50,6 +50,10 @@ public:
    void setHIL(Vector3f raw_pos, uint32_t timestamp_ms);
 
    bool enabled() { return _enable; }
+
+   Vector3f get_target_pos();
+
+   float get_target_yaw();
    // parameter var info table
    static const struct AP_Param::GroupInfo var_info[];
 

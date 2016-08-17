@@ -24,4 +24,7 @@ public:
    AP_VisPos_MAVLink(AP_VisPos *vispos):
    AP_VisPos_Backend(vispos) {}
    virtual void handle_raw_vispos_report(mavlink_channel_t chan, mavlink_message_t *msg);
+   float get_target_yaw() {return target_yaw; }
+private:
+   float target_yaw;
 };

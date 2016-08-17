@@ -73,6 +73,17 @@ Vector3f AP_VisPos::get_local_pos()
    }
 }
 
+Vector3f AP_VisPos::get_target_pos() {
+   return _ahrs.get_NavEKF2().get_vp_target_pos();
+}
+
+float AP_VisPos::get_target_yaw() {
+   if(_backend) {
+      return _backend->get_target_yaw();
+   }
+   return 0.0f;
+}
+
 void AP_VisPos::setHIL(Vector3f raw_pos, uint32_t timestamp_ms)
 {
    if (_backend) {

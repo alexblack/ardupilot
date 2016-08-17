@@ -45,6 +45,7 @@ public:
 
    virtual void set_last_pos_msg_time_ms(uint32_t ts_ms) { _last_pos_msg_time_ms = ts_ms; }
 
+   virtual float get_target_yaw() { return 0.0f; }
 protected:
 
    AP_VisPos* _frontend;
