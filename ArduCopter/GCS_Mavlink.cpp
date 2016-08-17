@@ -1736,9 +1736,9 @@ void GCS_MAVLINK_Copter::handleMessage(mavlink_message_t* msg)
             } else if(packet.coordinate_frame == MAV_FRAME_VISPOS_TARGET) {
                 float target_yaw = copter.vispos.get_target_yaw();
                 Vector3f target_pos = copter.vispos.get_target_pos();
-                pos_vector.x = packet.x*cos(target_yaw) - packet.y*sin(target_yaw);
-                pos_vector.y = packet.x*sin(target_yaw) + packet.y*cos(target_yaw);
-                pos_vector += target_pos;
+                pos_vector.x = packet.x*cos(target_yaw) - packet.y*sin(target_yaw) + target_pos.x*100.0f;
+                pos_vector.y = packet.x*sin(target_yaw) + packet.y*cos(target_yaw) + target_pos.y*100.0f;
+                pos_vector.z = packet.z + target_pos.z*100.0f;
                 //hal.console->printf("Received Message: %f %f %f\n", pos_vector.x, pos_vector.y, pos_vector.z);
             }else {
                 // convert from alt-above-home to alt-above-ekf-origin
