@@ -762,6 +762,7 @@ private:
     void set_auto_yaw_mode(uint8_t yaw_mode);
     void set_auto_yaw_look_at_heading(float angle_deg, float turn_rate_dps, int8_t direction, uint8_t relative_angle);
     void set_auto_yaw_roi(const Location &roi_location);
+    float set_auto_yaw_roi_origin_ned(const Vector3f &roi_location);
     float get_auto_heading(void);
     bool autotune_init(bool ignore_checks);
     void autotune_stop();

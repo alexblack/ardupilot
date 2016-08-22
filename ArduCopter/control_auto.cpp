@@ -711,6 +711,13 @@ void Copter::set_auto_yaw_look_at_heading(float angle_deg, float turn_rate_dps, 
 
     // TO-DO: restore support for clockwise and counter clockwise rotation held in cmd.content.yaw.direction.  1 = clockwise, -1 = counterclockwise
 }
+float Copter::set_auto_yaw_roi_origin_ned(const Vector3f &roi_location)
+{
+    // if we have no camera mount aim the quad at the location
+    roi_WP = roi_location;
+    set_auto_yaw_mode(AUTO_YAW_ROI);
+    return yaw_look_at_WP_bearing;
+}
 
 // set_auto_yaw_roi - sets the yaw to look at roi for auto mode
 void Copter::set_auto_yaw_roi(const Location &roi_location)
