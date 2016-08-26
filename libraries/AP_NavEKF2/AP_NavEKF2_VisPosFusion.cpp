@@ -12,7 +12,19 @@
 #include <stdio.h>
 
 extern const AP_HAL::HAL& hal;
-
+static log_VPKF logstr = {
+        LOG_PACKET_HEADER_INIT(LOG_VPKF_MSG),
+        time_us    : 0,
+        sample_ms  : 0,
+        fuse_ms    : 0,
+        est_posx   : 0.0f,
+        est_posy   : 0.0f,
+        est_posz   : 0.0f,
+        meas_posx  : 0.0f,
+        meas_posy  : 0.0f,
+        meas_posz  : 0.0f,
+        target_yaw : 0.0f
+};
 static bool target_pos_set;
 /********************************************************
 *                   RESET FUNCTIONS                     *
@@ -602,9 +614,25 @@ void NavEKF2_core::FuseVisPos()
             }
         }
     }
-    //if(core_index == 0)
-    //    hal.console->printf("VisPos Innov: %f %f \n", innovVisPos[0], innovVisPos[1]);
+    logstr = {
+        LOG_PACKET_HEADER_INIT(LOG_VPKF_MSG),
+        time_us    : AP_HAL::micros64(),
+        sample_ms  : visPosDataDelayed.time_ms,
+        fuse_ms    : imuSampleTime_ms,
+        est_posx   : lpos[0],
+        est_posy   : lpos[1],
+        est_posz   : lpos[2],
+        meas_posx  : visPosDataDelayed.pos.x,
+        meas_posy  : visPosDataDelayed.pos.y,
+        meas_posz  : visPosDataDelayed.pos.z,
+        target_yaw : 0.0f
+    };
+}
 
+// return data for debugging visual position fusion
+void NavEKF2_core::getVisPosDebug(log_VPKF &vpkf)
+{
+    vpkf = logstr;
 }
 
 /********************************************************

@@ -1039,11 +1039,11 @@ void NavEKF2::getFlowDebug(int8_t instance, float &varFlow, float &gndOffset, fl
     }
 }
 
-void NavEKF2::getVisPosDebug(int8_t instance, float &varVisPos, float &visPosInnovX, float &visPosInnovY, float &visPosInnovZ)
+void NavEKF2::getVisPosDebug(int8_t instance, log_VPKF &vpkf)
 {
     if (instance < 0 || instance >= num_cores) instance = primary;
     if (core) {
-        core[instance].getVisPosDebug( varVisPos,  visPosInnovX,  visPosInnovY, visPosInnovZ);
+        core[instance].getVisPosDebug(vpkf);
     }
 }
 

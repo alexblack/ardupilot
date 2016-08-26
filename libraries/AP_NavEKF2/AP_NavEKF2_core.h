@@ -185,7 +185,7 @@ public:
     // return data for debugging optical flow fusion
     void getFlowDebug(float &varFlow, float &gndOffset, float &flowInnovX, float &flowInnovY, float &auxInnov, float &HAGL, float &rngInnov, float &range, float &gndOffsetErr) const;
 
-    void getVisPosDebug(float &varVisPos, float &visPosInnovX, float &visPosInnovY, float &visPosInnovZ);
+    void getVisPosDebug(log_VPKF &vpkf);
 
     Vector3f get_vp_target_pos();
 

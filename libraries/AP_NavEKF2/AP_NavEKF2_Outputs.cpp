@@ -78,15 +78,6 @@ void NavEKF2_core::getFlowDebug(float &varFlow, float &gndOffset, float &flowInn
     gndOffsetErr = sqrtf(Popt); // note Popt is constrained to be non-negative in EstimateTerrainOffset()
 }
 
-// return data for debugging visual position fusion
-void NavEKF2_core::getVisPosDebug(float &varVisPos, float &visPosInnovX, float &visPosInnovY, float &visPosInnovZ)
-{
-    varVisPos = MAX(visPosTestRatio[0],visPosTestRatio[1]);
-    visPosInnovX = innovVisPos[0];
-    visPosInnovY = innovVisPos[1];
-    visPosInnovZ = innovVisPos[2];
-}
-
 Vector3f NavEKF2_core::get_vp_target_pos() {
     return target_pos_ef;
 }

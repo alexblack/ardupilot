@@ -29,6 +29,7 @@
 #include <AP_Compass/AP_Compass.h>
 #include <AP_NavEKF/AP_Nav_Common.h>
 #include <AP_RangeFinder/AP_RangeFinder.h>
+#include <DataFlash/LogStructure.h>
 
 class NavEKF2_core;
 class AP_AHRS;
@@ -200,7 +201,7 @@ public:
     void getFlowDebug(int8_t instance, float &varFlow, float &gndOffset, float &flowInnovX, float &flowInnovY, float &auxInnov, float &HAGL, float &rngInnov, float &range, float &gndOffsetErr);
 
     // return data for debugging visPos fusion for the specified instance
-    void getVisPosDebug(int8_t instance, float &varVisPos, float &visPosInnovX, float &visPosInnovY, float &visPosInnovZ);
+    void getVisPosDebug(int8_t instance, log_VPKF &vpkf);
 
     // called by vehicle code to specify that a takeoff is happening
     // causes the EKF to compensate for expected barometer errors due to ground effect

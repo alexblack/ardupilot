@@ -400,12 +400,15 @@ struct PACKED log_NKF5 {
 struct PACKED log_VPKF {
     LOG_PACKET_HEADER;
     uint64_t time_us;
-    uint16_t normInnov;
-    float VIX;
-    float VIY;
-    float VIZ;
+    uint64_t sample_ms;
+    uint64_t fuse_ms;
+    float est_posx;
+    float est_posy;
+    float est_posz;
+    float meas_posx;
+    float meas_posy;
+    float meas_posz;
     float target_yaw;
-    float unused;
 };
 
 struct PACKED log_Cmd {
@@ -851,7 +854,7 @@ Format characters in the format string for binary log messages
     { LOG_NKF5_MSG, sizeof(log_NKF5), \
       "NKF5","QBhhhcccCCfff","TimeUS,NI,FIX,FIY,AFI,HAGL,offset,RI,rng,Herr,eAng,eVel,ePos" }, \
     { LOG_VPKF_MSG, sizeof(log_VPKF), \
-      "VPKF","Qhfffff","TimeUS,NI,VIX,VIY,VIZ,TYaw,unused" }, \
+      "VPKF","QQQfffffff","TimeUS,SampleMS,FuseMS,EPosX,EPosY,EPosZ,MPosX,MPosY,MPosZ,TYaw" }, \
     { LOG_NKF6_MSG, sizeof(log_EKF1), \
       "NKF6","QccCfffffffccc","TimeUS,Roll,Pitch,Yaw,VN,VE,VD,dPD,PN,PE,PD,GX,GY,GZ" }, \
     { LOG_NKF7_MSG, sizeof(log_NKF2), \
