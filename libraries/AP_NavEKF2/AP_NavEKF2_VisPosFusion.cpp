@@ -86,15 +86,15 @@ void NavEKF2_core::SelectVisPosFusion()
         // reset flag to indicate that no new vispos data is available for fusion
         visPosDataToFuse = false;
     } else {
-
+        Vector3f pos_bf = (Tnb_vispos.transposed())*(target_pos_ef-stateStruct.position);
         logstr = {
             LOG_PACKET_HEADER_INIT(LOG_VPKF_MSG),
             time_us    : AP_HAL::micros64(),
             sample_ms  : visPosDataDelayed.time_ms,
             fuse_ms    : 0,
-            est_posx   : 0.0f,
-            est_posy   : 0.0f,
-            est_posz   : 0.0f,
+            est_posx   : pos_bf.x,
+            est_posy   : pos_bf.y,
+            est_posz   : pos_bf.z,
             meas_posx  : visPosDataDelayed.pos.x,
             meas_posy  : visPosDataDelayed.pos.y,
             meas_posz  : visPosDataDelayed.pos.z,
