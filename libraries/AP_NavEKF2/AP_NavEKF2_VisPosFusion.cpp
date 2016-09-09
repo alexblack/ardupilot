@@ -85,6 +85,21 @@ void NavEKF2_core::SelectVisPosFusion()
         FuseVisPos();
         // reset flag to indicate that no new vispos data is available for fusion
         visPosDataToFuse = false;
+    } else {
+
+        logstr = {
+            LOG_PACKET_HEADER_INIT(LOG_VPKF_MSG),
+            time_us    : AP_HAL::micros64(),
+            sample_ms  : visPosDataDelayed.time_ms,
+            fuse_ms    : 0,
+            est_posx   : 0.0f,
+            est_posy   : 0.0f,
+            est_posz   : 0.0f,
+            meas_posx  : visPosDataDelayed.pos.x,
+            meas_posy  : visPosDataDelayed.pos.y,
+            meas_posz  : visPosDataDelayed.pos.z,
+            target_yaw : 0.0f
+        };    
     }
 
     // stop the performance timer
