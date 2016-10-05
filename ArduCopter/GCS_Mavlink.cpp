@@ -1737,6 +1737,7 @@ void GCS_MAVLINK_Copter::handleMessage(mavlink_message_t* msg)
                 float target_yaw = copter.vispos.get_target_yaw();
                 Vector3f target_pos = copter.vispos.get_target_pos();
                 if(target_pos.x == 0.0f && target_pos.y == 0.0f && target_pos.z == 0.0f) {
+                    mavlink_msg_command_ack_send_buf(msg, chan, MAVLINK_MSG_ID_SET_POSITION_TARGET_LOCAL_NED, MAV_RESULT_FAILED);
                     break;
                 }
                 target_pos.z = -target_pos.z;
@@ -1788,7 +1789,7 @@ void GCS_MAVLINK_Copter::handleMessage(mavlink_message_t* msg)
         } else {
             result = MAV_RESULT_FAILED;
         }
-
+        mavlink_msg_command_ack_send_buf(msg, chan, MAVLINK_MSG_ID_SET_POSITION_TARGET_LOCAL_NED, result);
         break;
     }
 
